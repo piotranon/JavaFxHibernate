@@ -67,19 +67,19 @@ public class editCustomer {
         if(!name.getText().equals(c.getCustomer_name()))
         {
             copy.setCustomer_name(name.getText());
-            changed.append("Changed name: "+c.getCustomer_name()+" to :"+name.getText()+"\r\n");
+            changed.append("name: "+c.getCustomer_name()+" to : "+name.getText()+"\r\n");
             updated=true;
         }
         if(!surname.getText().equals(c.getCustomer_surname()))
         {
             copy.setCustomer_surname(surname.getText());
-            changed.append("Changed surname: "+c.getCustomer_surname()+" to :"+surname.getText()+"\r\n");
+            changed.append("surname: "+c.getCustomer_surname()+" to : "+surname.getText()+"\r\n");
             updated=true;
         }
         if(!date_joined.getValue().isEqual(c.getDate_joined().toLocalDate()))
         {
             copy.setDate_joined(java.sql.Date.valueOf(date_joined.getValue()));
-            changed.append("Changed date_joined: "+c.getDate_joined().toLocalDate()+" to :"+date_joined.getValue()+"\r\n");
+            changed.append("date_joined: "+c.getDate_joined().toLocalDate()+" to : "+date_joined.getValue()+"\r\n");
             updated=true;
         }
         if(missingdata)

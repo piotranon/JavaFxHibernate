@@ -1,14 +1,16 @@
 package entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @Table(name="customer")
-public class Customer {
+public class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="customer_id")
+    @Column(name="customer_id", unique = true)
     private long id;
 
     @Column(name="customer_name")
@@ -20,28 +22,34 @@ public class Customer {
     @Column(name="date_joined")
     private Date date_joined;
 
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Bot> bots;
+
     public Customer() {
     }
     public Customer(Customer customer){
-        this.customer_name=customer.customer_name;
-        this.customer_surname=customer.customer_surname;
-        this.date_joined=customer.date_joined;
-        this.id=customer.id;
+        this.customer_name=customer.getCustomer_name();
+        this.customer_surname=customer.getCustomer_surname();
+        this.date_joined=customer.getDate_joined();
+        this.id=customer.getId();
+        this.bots = customer.getBots();
     }
-    public Customer(long id, String customer_name, String customer_surname, Date date_joined) {
+    public Customer(long id, String customer_name, String customer_surname, Date date_joined, List<Bot> bots) {
         this.customer_name=customer_name;
         this.customer_surname=customer_surname;
         this.date_joined=date_joined;
         this.id=id;
+        this.bots = bots;
     }
 
     @Override
     public String toString() {
-        return "customer{" +
+        return "Customer{" +
                 "id=" + id +
                 ", customer_name='" + customer_name + '\'' +
                 ", customer_surname='" + customer_surname + '\'' +
                 ", date_joined=" + date_joined +
+                ", bots=" + bots +
                 '}';
     }
 
@@ -75,5 +83,13 @@ public class Customer {
 
     public void setDate_joined(Date date_joined) {
         this.date_joined = date_joined;
+    }
+
+    public List<Bot> getBots() {
+        return bots;
+    }
+
+    public void setBots(List<Bot> bots) {
+        this.bots = bots;
     }
 }

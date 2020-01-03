@@ -28,5 +28,6 @@
         <property name="hibernate.dbcp.maxWaitMillis">-1</property>
 
         <mapping class="entity.Customer"/>
+        <mapping class="entity.Bot"/>
     </session-factory>
 </hibernate-configuration>

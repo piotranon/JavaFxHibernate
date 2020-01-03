@@ -60,41 +60,59 @@ public class customers {
     }
     @FXML
     void deleteCustomer(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete Customer");
-        alert.setHeaderText("Are you sure that you want to delete customer with specified data.");
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Customer");
+            alert.setHeaderText("Are you sure that you want to delete customer with specified data.");
 
-        Customer c=new Customer(tableview.getSelectionModel().getSelectedItem());
-        alert.setContentText("Name: "+c.getCustomer_name()+"\r\nSurname: "+c.getCustomer_surname()+ "\r\nDate_joined: "+c.getDate_joined());
+            Customer c = new Customer(tableview.getSelectionModel().getSelectedItem());
+            alert.setContentText("Name: " + c.getCustomer_name() + "\r\nSurname: " + c.getCustomer_surname() + "\r\nDate_joined: " + c.getDate_joined());
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
 
-            SessionFactory sessionFactory = hibernateSession.getSessionFactory();
-            Session session = sessionFactory.openSession();
-            session.beginTransaction();
-            session.remove(c);
-            session.getTransaction().commit();
-            session.close();
+                SessionFactory sessionFactory = hibernateSession.getSessionFactory();
+                Session session = sessionFactory.openSession();
+                session.beginTransaction();
+                session.remove(c);
+                session.getTransaction().commit();
+                session.close();
+            }
+            reloaddata();
+        }catch (NullPointerException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Customer");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select customer first!");
+            alert.showAndWait();
         }
-        reloaddata();
     }
 
     @FXML
     void editCustomer(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editCustomer.fxml"));
-        Parent root = loader.load();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editCustomer.fxml"));
+            Parent root = loader.load();
 //        addCustomer controller= (addCustomer) loader.getController();
-        Scene scene = new Scene(root);
-        Stage stage = new Stage();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
 
-        stage.setTitle("Edit Customer");
-        stage.setScene(scene);
-        editCustomer controller=(editCustomer) loader.getController();
-        controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
-
-        stage.showAndWait();
-        reloaddata();
+            stage.setTitle("Edit Customer");
+            stage.setScene(scene);
+            editCustomer controller = (editCustomer) loader.getController();
+            controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
+            stage.showAndWait();
+            reloaddata();
+        }catch (NullPointerException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Customer");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select customer first!");
+            alert.showAndWait();
+        }
     }
     @FXML
     void reloadDataToView(ActionEvent event) {
@@ -131,6 +149,51 @@ public class customers {
     }
 
     @FXML
+    void editCustomerBots(ActionEvent event) throws IOException {
+//        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/bots.fxml"));
+
+            bots controller=(bots) loader.getController();
+
+            System.out.println("controller:" +controller.toString());
+
+            Customer c=new Customer(tableview.getSelectionModel().getSelectedItem());
+            controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            stage.setTitle("Customer Bots");
+            stage.setScene(scene);
+            stage.showAndWait();
+            reloaddata();
+//        }catch (NullPointerException e)
+//        {
+//            Alert alert = new Alert(Alert.AlertType.WARNING);
+//            alert.setTitle("Select Customer");
+//            alert.setHeaderText("Something went wrong.");
+//            alert.setContentText("Select customer first!");
+//            alert.showAndWait();
+//            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//            e.printStackTrace();
+//        }
+    }
+
+    @FXML
+    void editCustomerChannels(ActionEvent event) {
+        try {
+
+        }catch (NullPointerException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Customer");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select customer first!");
+            alert.showAndWait();
+        }
+    }
+    @FXML
     void initialize() {
 //        assert customers != null : "fx:id=\"customers\" was not injected: check your FXML file 'customers.fxml'.";
 //        assert tableview != null : "fx:id=\"tableview\" was not injected: check your FXML file 'customers.fxml'.";
@@ -146,6 +209,7 @@ public class customers {
 
     private List<Customer> Customers = new ArrayList<Customer>();
     private List<Customer> Limited = new ArrayList<Customer>();
+
     public void reloaddata(){
         SessionFactory sessionFactory = hibernateSession.getSessionFactory();
         Session session = sessionFactory.openSession();
