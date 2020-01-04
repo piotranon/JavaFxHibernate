@@ -38,7 +38,7 @@
          </padding>
          <children>
             <Label text="Search Bot" />
-            <Button fx:id="newCustomer" mnemonicParsing="false" onAction="#newBot" style="-fx-background-color: #5cdb95; -fx-border-style: solid; -fx-border-radius: 10; -fx-background-radius: 10;" text="New Bot" GridPane.rowIndex="3">
+            <Button fx:id="newBot" mnemonicParsing="false" onAction="#newBot" style="-fx-background-color: #5cdb95; -fx-border-style: solid; -fx-border-radius: 10; -fx-background-radius: 10;" text="New Bot" GridPane.rowIndex="3">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
@@ -60,6 +60,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
             <Label text="Bot" GridPane.rowIndex="2" />
+            <Button fx:id="cancel" mnemonicParsing="false" onAction="#cancel" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-style: solid;" text="Go Back " GridPane.rowIndex="8" />
          </children>
       </GridPane>
    </right>
@@ -84,7 +85,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Customer INFO" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                  <Label style="-fx-font-size: 1.3em; -fx-font-weight: bold;" text="Customer" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                   <Label fx:id="name" text="Name :" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Label fx:id="surname" text="Surname :" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                   <Label fx:id="date" text="Date_joined :" GridPane.columnIndex="2" GridPane.rowIndex="1" />

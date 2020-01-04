@@ -1,3 +1,4 @@
+import controllers.customers;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,7 +17,9 @@ public class gui extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/customers.fxml"));
         Parent root = loader.load();
         //scene
-        primaryStage.setTitle("Hello World");
+        customers controller=(customers) loader.getController();
+        controller.setParentStage(primaryStage);
+        primaryStage.setTitle("JavaFX Hibernate");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 

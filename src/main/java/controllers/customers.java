@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -45,14 +46,16 @@ public class customers {
     @FXML
     private TextField search;
 
+    private Stage parentStage;
     @FXML
     void newCustomer(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/addCustomer.fxml"));
         Parent root = loader.load();
-//        addCustomer controller= (addCustomer) loader.getController();
+
         Scene scene = new Scene(root);
         Stage stage = new Stage();
-
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(parentStage);
         stage.setTitle("Create new Customer");
         stage.setScene(scene);
         stage.showAndWait();
@@ -95,9 +98,12 @@ public class customers {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editCustomer.fxml"));
             Parent root = loader.load();
-//        addCustomer controller= (addCustomer) loader.getController();
+
             Scene scene = new Scene(root);
             Stage stage = new Stage();
+
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
 
             stage.setTitle("Edit Customer");
             stage.setScene(scene);
@@ -123,8 +129,8 @@ public class customers {
     @FXML
     void limitList(KeyEvent event) {
         Limited.clear();
-        String text=search.getText();
-        if(search.getText().length()>0) {
+        String text=search.getText().toLowerCase();
+        if(search.getText().length()>=0) {
             for (int i = 0; i < Customers.size(); i++) {
                 boolean was = false;
                 if (!was && Customers.get(i).getCustomer_name().contains(text)) {
@@ -142,42 +148,34 @@ public class customers {
             }
             setCustomers(Limited);
         }
-        else
-        {
-            setCustomers(Customers);
-        }
     }
 
     @FXML
     void editCustomerBots(ActionEvent event) throws IOException {
-//        try {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/bots.fxml"));
-
-            bots controller=(bots) loader.getController();
-
-            System.out.println("controller:" +controller.toString());
-
-            Customer c=new Customer(tableview.getSelectionModel().getSelectedItem());
-            controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
             Parent root = loader.load();
+            bots controller=(bots) loader.getController();
+            controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();
 
             stage.setTitle("Customer Bots");
             stage.setScene(scene);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
             stage.showAndWait();
             reloaddata();
-//        }catch (NullPointerException e)
-//        {
-//            Alert alert = new Alert(Alert.AlertType.WARNING);
-//            alert.setTitle("Select Customer");
-//            alert.setHeaderText("Something went wrong.");
-//            alert.setContentText("Select customer first!");
-//            alert.showAndWait();
-//            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-//            e.printStackTrace();
-//        }
+        }catch (NullPointerException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Customer");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select customer first!");
+            alert.showAndWait();
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -218,6 +216,9 @@ public class customers {
         Customers = hibernateSession.loadAllData(Customer.class, session);
         setCustomers(Customers);
         session.close();
+    }
+    public void setParentStage(Stage stage){
+        parentStage=stage;
     }
 
     public void setCustomers(List<Customer> customerslist) {

@@ -1,4 +1,6 @@
+import controllers.bots;
 import entity.Customer;
+import javafx.fxml.FXMLLoader;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.hibernateSession;
@@ -26,6 +28,8 @@ public class Main {
         Customers.get(0).setCustomer_name("adam");
         session.update(Customers.get(0));
         session.getTransaction().commit();
+
+
 //        session.delete(customer);
 //        session.remove(customers.get(3));
         List<Customer> customers2 = hibernateSession.loadAllData(Customer.class, session);
@@ -43,5 +47,6 @@ public class Main {
 
         session.getTransaction().commit();
         hibernateSession.shutdown();
+
     }
 }

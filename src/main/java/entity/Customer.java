@@ -49,7 +49,7 @@ public class Customer implements Serializable {
                 ", customer_name='" + customer_name + '\'' +
                 ", customer_surname='" + customer_surname + '\'' +
                 ", date_joined=" + date_joined +
-                ", bots=" + bots +
+                ", bots=" + bots.toString() +
                 '}';
     }
 
