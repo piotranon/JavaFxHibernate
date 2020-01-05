@@ -1,7 +1,6 @@
 package controllers;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import entity.Bot;
@@ -37,8 +36,7 @@ public class editbots {
     private Button cancel;
 
     private Customer c;
-    private Bot bot;
-
+    private Bot b;
 
     @FXML
     void Edit(ActionEvent event) {
@@ -63,15 +61,16 @@ public class editbots {
             alert.show();
         }else
         {
-            Bot bot2=new Bot();
-            bot2.setName(name.getText());
-            bot2.setFunctions(function.getText());
-            bot2.setCustomer(c);
+//          powinnien byc updatowany bot a nie zmieniany
+//          potrzeba referencje do obiektu z listy jezeli istnieje
 
-            List<Bot> botList=c.getBots();
-            botList.remove(bot);
-            botList.add(bot2);
-            c.setBots(botList);
+//            botList.remove(bot);
+//            botList.add(bot2);
+
+            Bot edited=c.getBots().get(c.getBots().indexOf(b));
+
+            edited.setName(name.getText());
+            edited.setFunctions(function.getText());
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
             Session session = sessionFactory.openSession();
@@ -93,17 +92,16 @@ public class editbots {
 
     @FXML
     void initialize() {
-
     }
 
     void setCustomerData(Customer c)
     {
         this.c=c;
     }
-    void setBotData(Bot bot){
-        this.bot=bot;
-        name.setText(bot.getName());
-        function.setText(bot.getFunctions());
-    }
 
+    void setBot(Bot b){
+        this.b=b;
+        name.setText(c.getBots().get(c.getBots().indexOf(b)).getName());
+        function.setText(c.getBots().get(c.getBots().indexOf(b)).getFunctions());
+    }
 }

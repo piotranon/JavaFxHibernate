@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import entity.Bot;
 import entity.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,71 +67,91 @@ public class bots {
 
     @FXML
     void deleteBot(ActionEvent event) {
+        System.out.println("-----------------------");
+        System.out.println("deleting bot");
+        System.out.println("-----------------------");
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Bot");
+            alert.setHeaderText("Are you sure that you want to delete bot with specified data.");
+            Bot b=tableview.getSelectionModel().getSelectedItem();
+            alert.setContentText("Name: " + b.getName() + "\r\nSurname: " + b.getFunctions());
 
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                c.getBots().remove(b);
+                SessionFactory sessionFactory = hibernateSession.getSessionFactory();
+                Session session = sessionFactory.openSession();
+                session.beginTransaction();
+                session.update(c);
+                session.getTransaction().commit();
+                session.close();
+                reloaddata();
+                System.out.println("usunieto: "+b.toString());
+            }
+        }catch (Exception e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Bot");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select Bot first!");
+            alert.showAndWait();
+        }
+        System.out.println("-----------------------");
     }
 
     @FXML
     void editBot(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editbots.fxml"));
-        Parent root = loader.load();
-        editbots controller=(editbots) loader.getController();
+        System.out.println("//////////////////");
+        System.out.println("editing bot");
+        System.out.println("//////////////////");
 
-        controller.setCustomerData(c);
-        controller.setBotData(tableview.getSelectionModel().getSelectedItem());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editbots.fxml"));
+            Parent root = loader.load();
+            editbots controller = (editbots) loader.getController();
 
-        Scene scene = new Scene(root);
-        Stage stage = new Stage();
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner((Stage)cancel.getScene().getWindow());
-        stage.setTitle("Customer Bots");
-        stage.setScene(scene);
-        stage.showAndWait();
+            controller.setCustomerData(c);
+            controller.setBot(tableview.getSelectionModel().getSelectedItem());
 
-        reloadDataToView(event);
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) cancel.getScene().getWindow());
+            stage.setTitle("Customer Bots");
+            stage.setScene(scene);
+            stage.showAndWait();
+
+            reloaddata();
+        }catch (Exception e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Bot");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select Bot first!");
+            alert.showAndWait();
+        }
+        System.out.println("//////////////////");
     }
-        private List<Bot> Bots = new ArrayList<Bot>();
-        private List<Bot> Limited = new ArrayList<Bot>();
+
     @FXML
     void limitList(KeyEvent event) {
-        Limited.clear();
-        String text=search.getText().toLowerCase();
-        System.out.println("search: "+search.getText());
-        if(search.getText().length()>=0)
-        {
-            System.out.println("-------");
-            System.out.println("size: "+Bots.size());
-            System.out.println(Bots.toString());
-            for(int i=0;i<Bots.size();i++) {
-                boolean was = false;
-                if (!was && Bots.get(i).getName().contains(text)) {
-                    was = true;
-                    Limited.add(Bots.get(i));
-                }
-                if (!was && Bots.get(i).getFunctions().contains(text)) {
-                    was = true;
-                    Limited.add(Bots.get(i));
-                }
-                if (was)
-                    System.out.println(Bots.get(i));
-            }
-            setBots(Limited);
-        }
+        loadview(Bots);
     }
 
     @FXML
     void reloadDataToView(ActionEvent event) {
-        SessionFactory sessionFactory = hibernateSession.getSessionFactory();
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        c=session.load(Customer.class,c.getId());
-        Bots=c.getBots();
-        Limited.clear();
-        setBots(Bots);
-        session.close();
+        search.setText("");
+        reloaddata();
     }
 
     @FXML
     void newBot(ActionEvent event) throws IOException {
+        System.out.println("+++++++++++++++++");
+        System.out.println("new bot");
+        System.out.println("+++++++++++++++++");
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/addbots.fxml"));
         Parent root = loader.load();
         addbots controller=(addbots) loader.getController();
@@ -141,10 +165,10 @@ public class bots {
         stage.setScene(scene);
         stage.showAndWait();
 
-        System.out.println("----------------------------");
-        System.out.println(c.getBots().toString());
+        reloaddata();
 
-        reloadDataToView(event);
+        System.out.println("+++++++++++++++++");
+
     }
 
     @FXML
@@ -164,19 +188,68 @@ public class bots {
         Stage stage = (Stage) cancel.getScene().getWindow();
         stage.close();
     }
-    public void setBots(List<Bot> botlist)
-    {
-        ObservableList<Bot> botsxml= (ObservableList<Bot>) FXCollections.observableList(botlist);
-        tableview.getItems().clear();
-        tableview.setItems(botsxml);
+
+    public void reloaddata(){
+        System.out.println("----------------------");
+        System.out.println("reloading customer bots data");
+        System.out.println("----------------------");
+
+        SessionFactory sessionFactory = hibernateSession.getSessionFactory();
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        setCustomerData(session.load(Customer.class,c.getId()));
+
+        session.close();
+        System.out.println("----------------------");
     }
+
+    private List<Bot> Bots = new ArrayList<Bot>();
 
     public void setCustomerData(Customer c) {
         this.c=c;
-        setBots(c.getBots());
         Bots=c.getBots();
         name.setText("Name: "+c.getCustomer_name());
         surname.setText("Surname: "+c.getCustomer_surname());
         date.setText("Date_joined: "+c.getDate_joined().toString());
+
+        loadview(Bots);
+    }
+
+    void loadview(List<Bot> Bots)
+    {
+        System.out.println("---------");
+        System.out.println("refreshing bots view");
+        System.out.println("---------");
+        tableview.setItems(sortedList(Bots));
+        System.out.println("---------");
+    }
+
+    SortedList<Bot> sortedList(List<Bot> Bots){
+        ObservableList<Bot> botsxml=(ObservableList<Bot>) FXCollections.observableList(Bots);
+        FilteredList<Bot> filteredList=new FilteredList<Bot>(botsxml);
+
+        Predicate predicate=new Predicate() {
+            public boolean test(Object o) {
+
+                Bot b =new Bot((Bot) o);
+
+                if(b.getName().toLowerCase().contains(search.getText().toLowerCase()))
+                {
+                    return true;
+                }else if(b.getFunctions().toLowerCase().contains(search.getText().toLowerCase()))
+                {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        filteredList.setPredicate(predicate);
+
+        SortedList<Bot> sortedData= new SortedList<Bot>(filteredList);
+        sortedData.comparatorProperty().bind(tableview.comparatorProperty());
+
+        return sortedData;
     }
 }

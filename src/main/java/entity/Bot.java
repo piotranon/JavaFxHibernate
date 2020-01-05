@@ -23,10 +23,18 @@ public class Bot implements Serializable {
 
     public Bot(){}
 
-    public Bot(entity.Customer customer, String name, String functions) {
+    public Bot(Customer customer, String name, String functions) {
         this.customer = customer;
         this.name = name;
         this.functions = functions;
+    }
+
+    public Bot(Bot bot)
+    {
+        this.customer=bot.customer;
+        this.functions=bot.functions;
+        this.name=bot.name;
+        this.id=bot.id;
     }
 
     public Long getId() {
@@ -69,5 +77,12 @@ public class Bot implements Serializable {
                 ", name='" + name + '\'' +
                 ", Functions='" + functions + '\'' +
                 '}';
+    }
+    public Bot equalsobject(Bot b)
+    {
+        if(this == b)
+            return this;
+        else
+            return new Bot();
     }
 }

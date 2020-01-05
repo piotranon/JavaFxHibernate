@@ -3,6 +3,7 @@ package entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ public class Customer implements Serializable {
     private Date date_joined;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Bot> bots;
+    private List<Bot> bots=new ArrayList<Bot>();
 
     public Customer() {
     }

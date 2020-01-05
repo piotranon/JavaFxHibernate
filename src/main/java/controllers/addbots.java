@@ -1,20 +1,19 @@
 package controllers;
 
-        import java.net.URL;
-        import java.util.List;
-        import java.util.ResourceBundle;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-        import entity.Bot;
-        import entity.Customer;
-        import javafx.event.ActionEvent;
-        import javafx.fxml.FXML;
-        import javafx.scene.control.Alert;
-        import javafx.scene.control.Button;
-        import javafx.scene.control.TextField;
-        import javafx.stage.Stage;
-        import org.hibernate.Session;
-        import org.hibernate.SessionFactory;
-        import util.hibernateSession;
+import entity.Bot;
+import entity.Customer;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import util.hibernateSession;
 
 public class addbots {
 
@@ -66,9 +65,7 @@ public class addbots {
             bot.setFunctions(function.getText());
             bot.setCustomer(c);
 
-            List<Bot> botList=c.getBots();
-            botList.add(bot);
-            c.setBots(botList);
+            c.getBots().add(bot);
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
             Session session = sessionFactory.openSession();

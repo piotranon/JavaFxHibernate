@@ -3,6 +3,8 @@ package controllers;
 import entity.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class customers {
 
@@ -47,6 +50,7 @@ public class customers {
     private TextField search;
 
     private Stage parentStage;
+
     @FXML
     void newCustomer(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/addCustomer.fxml"));
@@ -58,11 +62,24 @@ public class customers {
         stage.initOwner(parentStage);
         stage.setTitle("Create new Customer");
         stage.setScene(scene);
+
+        System.out.println("++++++++++++++++");
+        System.out.println("new customer");
+        System.out.println("++++++++++++++++");
+
+
         stage.showAndWait();
+
+        System.out.println("++++++++++++++++");
+
         reloaddata();
     }
     @FXML
     void deleteCustomer(ActionEvent event) {
+        System.out.println("--------------------");
+        System.out.println("deleting customer");
+        System.out.println("--------------------");
+
         try {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete Customer");
@@ -82,7 +99,7 @@ public class customers {
                 session.close();
             }
             reloaddata();
-        }catch (NullPointerException e)
+        }catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
@@ -90,10 +107,14 @@ public class customers {
             alert.setContentText("Select customer first!");
             alert.showAndWait();
         }
+        System.out.println("--------------------");
     }
 
     @FXML
     void editCustomer(ActionEvent event) throws IOException {
+        System.out.println("////////////////////////");
+        System.out.println("editing customer");
+        System.out.println("////////////////////////");
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editCustomer.fxml"));
@@ -110,8 +131,9 @@ public class customers {
             editCustomer controller = (editCustomer) loader.getController();
             controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
             stage.showAndWait();
+
             reloaddata();
-        }catch (NullPointerException e)
+        }catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
@@ -119,35 +141,16 @@ public class customers {
             alert.setContentText("Select customer first!");
             alert.showAndWait();
         }
+        System.out.println("////////////////////////");
     }
     @FXML
     void reloadDataToView(ActionEvent event) {
-        search.setText("");
         reloaddata();
     }
 
     @FXML
     void limitList(KeyEvent event) {
-        Limited.clear();
-        String text=search.getText().toLowerCase();
-        if(search.getText().length()>=0) {
-            for (int i = 0; i < Customers.size(); i++) {
-                boolean was = false;
-                if (!was && Customers.get(i).getCustomer_name().contains(text)) {
-                    was = true;
-                    Limited.add(Customers.get(i));
-                }
-                if (!was && Customers.get(i).getCustomer_surname().contains(text)) {
-                    was = true;
-                    Limited.add(Customers.get(i));
-                }
-                if (!was && Customers.get(i).getDate_joined().toString().contains(text)) {
-                    was = true;
-                    Limited.add(Customers.get(i));
-                }
-            }
-            setCustomers(Limited);
-        }
+        loadview(Customers);
     }
 
     @FXML
@@ -166,8 +169,9 @@ public class customers {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.showAndWait();
-            reloaddata();
-        }catch (NullPointerException e)
+//            reloaddata();
+
+        }catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
@@ -176,6 +180,7 @@ public class customers {
             alert.showAndWait();
             e.printStackTrace();
         }
+
     }
 
     @FXML
@@ -202,30 +207,69 @@ public class customers {
         name.setCellValueFactory(new PropertyValueFactory<Customer, String>("customer_name"));
         surname.setCellValueFactory(new PropertyValueFactory<Customer, String>("customer_surname"));
         join_date.setCellValueFactory(new PropertyValueFactory<Customer, Date>("date_joined"));
+
         reloaddata();
     }
-
-    private List<Customer> Customers = new ArrayList<Customer>();
-    private List<Customer> Limited = new ArrayList<Customer>();
-
     public void reloaddata(){
+        System.out.println("----------------------");
+        System.out.println("reloading customer data");
+        System.out.println("----------------------");
         SessionFactory sessionFactory = hibernateSession.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
-        Customers = hibernateSession.loadAllData(Customer.class, session);
-        setCustomers(Customers);
+        setCustomers(hibernateSession.loadAllData(Customer.class, session));
+
         session.close();
+        System.out.println("----------------------");
     }
     public void setParentStage(Stage stage){
         parentStage=stage;
     }
 
-    public void setCustomers(List<Customer> customerslist) {
+    private List<Customer> Customers= new ArrayList<Customer>();
 
-        ObservableList<Customer> customersxml = (ObservableList<Customer>) FXCollections.observableList(customerslist);
+    public void setCustomers(List<Customer> Customers) {
+        this.Customers=Customers;
+        loadview(Customers);
+    }
+    void loadview(List<Customer> Customers){
+        System.out.println("---------");
+        System.out.println("refreshing customer view");
+        System.out.println("---------");
+        tableview.setItems(sortedList(Customers));
+        System.out.println("---------");
+    }
 
-        tableview.getItems().clear();
-        tableview.getItems().setAll(customersxml);
+    SortedList<Customer> sortedList(List<Customer> Customers){
+
+        ObservableList<Customer> customersxml = (ObservableList<Customer>) FXCollections.observableList(Customers);
+        FilteredList<Customer> filteredList=new FilteredList<Customer>(customersxml);
+
+        Predicate predicate=new Predicate() {
+            public boolean test(Object o) {
+
+                Customer c =new Customer((Customer) o);
+
+                if(c.getCustomer_name().toLowerCase().contains(search.getText().toLowerCase()))
+                {
+                    return true;
+                }else if(c.getCustomer_surname().toLowerCase().contains(search.getText().toLowerCase()))
+                {
+                    return true;
+                }else if(c.getDate_joined().toString().toLowerCase().contains(search.getText().toLowerCase()))
+                {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        filteredList.setPredicate(predicate);
+
+        SortedList<Customer> sortedData = new SortedList<Customer>(filteredList);
+        sortedData.comparatorProperty().bind(tableview.comparatorProperty());
+
+        return sortedData;
     }
 }

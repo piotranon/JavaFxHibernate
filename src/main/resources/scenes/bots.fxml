@@ -55,12 +55,12 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
-            <Button mnemonicParsing="false" onAction="#reloadDataToView" style="-fx-background-color: #7395AE; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-style: solid;" text="Reload Data" GridPane.rowIndex="9">
+            <Button mnemonicParsing="false" onAction="#reloadDataToView" style="-fx-background-color: #7395AE; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-style: solid;" text="Reload Data" GridPane.rowIndex="8">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
             <Label text="Bot" GridPane.rowIndex="2" />
-            <Button fx:id="cancel" mnemonicParsing="false" onAction="#cancel" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-style: solid;" text="Go Back " GridPane.rowIndex="8" />
+            <Button fx:id="cancel" mnemonicParsing="false" onAction="#cancel" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-style: solid;" text="Go Back " GridPane.rowIndex="9" />
          </children>
       </GridPane>
    </right>

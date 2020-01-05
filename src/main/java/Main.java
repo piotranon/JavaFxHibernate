@@ -28,8 +28,6 @@ public class Main {
         Customers.get(0).setCustomer_name("adam");
         session.update(Customers.get(0));
         session.getTransaction().commit();
-
-
 //        session.delete(customer);
 //        session.remove(customers.get(3));
         List<Customer> customers2 = hibernateSession.loadAllData(Customer.class, session);
