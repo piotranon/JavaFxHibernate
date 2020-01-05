@@ -26,32 +26,26 @@ public class Customer implements Serializable {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Bot> bots=new ArrayList<Bot>();
 
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Channel> channels=new ArrayList<Channel>();
+
     public Customer() {
     }
+
     public Customer(Customer customer){
-        this.customer_name=customer.getCustomer_name();
-        this.customer_surname=customer.getCustomer_surname();
-        this.date_joined=customer.getDate_joined();
-        this.id=customer.getId();
-        this.bots = customer.getBots();
+        this.customer_name=customer.customer_name;
+        this.customer_surname=customer.customer_surname;
+        this.date_joined=customer.date_joined;
+        this.id=customer.id;
+        this.bots = customer.bots;
     }
+
     public Customer(long id, String customer_name, String customer_surname, Date date_joined, List<Bot> bots) {
         this.customer_name=customer_name;
         this.customer_surname=customer_surname;
         this.date_joined=date_joined;
         this.id=id;
         this.bots = bots;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", customer_name='" + customer_name + '\'' +
-                ", customer_surname='" + customer_surname + '\'' +
-                ", date_joined=" + date_joined +
-                ", bots=" + bots.toString() +
-                '}';
     }
 
     public long getId() {
@@ -92,5 +86,25 @@ public class Customer implements Serializable {
 
     public void setBots(List<Bot> bots) {
         this.bots = bots;
+    }
+
+    public List<Channel> getChannels() {
+        return channels;
+    }
+
+    public void setChannels(List<Channel> channels) {
+        this.channels = channels;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", customer_name='" + customer_name + '\'' +
+                ", customer_surname='" + customer_surname + '\'' +
+                ", date_joined=" + date_joined +
+                ", bots=" + bots.toString() +
+                ", channels=" + channels.toString() +
+                '}';
     }
 }

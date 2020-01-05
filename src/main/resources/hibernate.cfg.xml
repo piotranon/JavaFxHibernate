@@ -29,5 +29,6 @@
 
         <mapping class="entity.Customer"/>
         <mapping class="entity.Bot"/>
+        <mapping class="entity.Channel"/>
     </session-factory>
 </hibernate-configuration>

@@ -17,13 +17,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.annotations.QueryHints;
 import util.hibernateSession;
 
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.metamodel.Metamodel;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class customers {
@@ -186,14 +190,29 @@ public class customers {
     @FXML
     void editCustomerChannels(ActionEvent event) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/channels.fxml"));
+            Parent root = loader.load();
+            channels controller=(channels) loader.getController();
+            controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
 
-        }catch (NullPointerException e)
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+
+            stage.setTitle("Customer Bots");
+            stage.setScene(scene);
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.showAndWait();
+//            reloaddata();
+
+        }catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
             alert.setHeaderText("Something went wrong.");
             alert.setContentText("Select customer first!");
             alert.showAndWait();
+            e.printStackTrace();
         }
     }
     @FXML
@@ -272,4 +291,8 @@ public class customers {
 
         return sortedData;
     }
+
+
+
+    //https://vladmihalcea.com/hibernate-multiplebagfetchexception/
 }

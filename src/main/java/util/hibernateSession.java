@@ -1,5 +1,7 @@
 package util;
 
+import entity.Customer;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -7,10 +9,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.security.auth.login.Configuration;
 import java.util.List;
+
 
 public class hibernateSession {
     private static StandardServiceRegistry registry;
@@ -21,12 +25,16 @@ public class hibernateSession {
             try {
                 // Create registry
                 registry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+
                 // Create MetadataSources
                 MetadataSources sources = new MetadataSources(registry);
+
                 // Create Metadata
                 Metadata metadata = sources.getMetadataBuilder().build();
+
                 // Create SessionFactory
                 sessionFactory = metadata.getSessionFactoryBuilder().build();
+
             } catch (Exception e) {
                 e.printStackTrace();
                 if (registry != null) {
@@ -48,4 +56,10 @@ public class hibernateSession {
         List<T> data = session.createQuery(criteria).getResultList();
         return data;
     }
+//    public static List<Customer> loadCustomers( Session session)
+//    {
+//        List<Customer> customers;
+//        EntityManager entityManager= session.getEntityManagerFactory().createEntityManager();
+//        customers=entityManager.createQuery("select ")
+//    }
 }

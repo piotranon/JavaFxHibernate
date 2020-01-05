@@ -3,7 +3,8 @@ package controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import entity.Bot;
+
+import entity.Channel;
 import entity.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.hibernateSession;
 
-public class addbots {
+public class addChannel {
 
     @FXML
     private ResourceBundle resources;
@@ -27,12 +28,10 @@ public class addbots {
     private TextField name;
 
     @FXML
-    private TextField function;
+    private TextField description;
 
     @FXML
     private Button cancel;
-
-    private Customer c;
 
     @FXML
     void Add(ActionEvent event) {
@@ -43,9 +42,9 @@ public class addbots {
             errors.append("Name is missing. \r\n");
             missingdata=true;
         }
-        if(function.getText().length()<=0)
+        if(description.getText().length()<=0)
         {
-            errors.append("Function is missing. \r\n");
+            errors.append("Description is missing. \r\n");
             missingdata=true;
         }
         if(missingdata)
@@ -57,18 +56,19 @@ public class addbots {
             alert.show();
         }else
         {
-            Bot bot=new Bot();
-            bot.setName(name.getText());
-            bot.setFunctions(function.getText());
-            bot.setCustomer(c);
+            Channel channel=new Channel();
 
-            c.getBots().add(bot);
+            channel.setName(name.getText());
+            channel.setDescription(description.getText());
+            channel.setCustomer(c);
+
+            c.getChannels().add(channel);
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
             Session session = sessionFactory.openSession();
             session.beginTransaction();
 
-            session.update(c);
+            session.update(channel);
             session.getTransaction().commit();
             session.close();
 
@@ -84,9 +84,11 @@ public class addbots {
 
     @FXML
     void initialize() {
+        assert name != null : "fx:id=\"name\" was not injected: check your FXML file 'addChannel.fxml'.";
+        assert description != null : "fx:id=\"description\" was not injected: check your FXML file 'addChannel.fxml'.";
 
     }
-
+    private Customer c;
     void setCustomerData(Customer c)
     {
         this.c=c;

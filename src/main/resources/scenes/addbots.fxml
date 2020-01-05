@@ -40,12 +40,12 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </Label>
-            <Label text="Function" GridPane.columnIndex="1">
+            <Label text="Functions" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </Label>
-            <Button fx:id="createNewBot" mnemonicParsing="false" onAction="#Add" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: #41b3a3;" text="Create new Bot" textAlignment="CENTER" GridPane.rowIndex="3">
+            <Button mnemonicParsing="false" onAction="#Add" prefHeight="20.0" prefWidth="200.0" style="-fx-background-color: #41b3a3;" text="Create new Bot" textAlignment="CENTER" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>

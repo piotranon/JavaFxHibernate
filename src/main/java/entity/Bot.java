@@ -78,11 +78,4 @@ public class Bot implements Serializable {
                 ", Functions='" + functions + '\'' +
                 '}';
     }
-    public Bot equalsobject(Bot b)
-    {
-        if(this == b)
-            return this;
-        else
-            return new Bot();
-    }
 }
