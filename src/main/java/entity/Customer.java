@@ -5,12 +5,13 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="customer")
 public class Customer implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="customer_id", unique = true)
     private long id;
 
@@ -24,10 +25,10 @@ public class Customer implements Serializable {
     private Date date_joined;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Bot> bots=new ArrayList<Bot>();
+    private Set<Bot> bots = null;
 
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Channel> channels=new ArrayList<Channel>();
+    private Set<Channel> channels = null;
 
     public Customer() {
     }
@@ -40,7 +41,7 @@ public class Customer implements Serializable {
         this.bots = customer.bots;
     }
 
-    public Customer(long id, String customer_name, String customer_surname, Date date_joined, List<Bot> bots) {
+    public Customer(long id, String customer_name, String customer_surname, Date date_joined, Set<Bot> bots) {
         this.customer_name=customer_name;
         this.customer_surname=customer_surname;
         this.date_joined=date_joined;
@@ -80,19 +81,19 @@ public class Customer implements Serializable {
         this.date_joined = date_joined;
     }
 
-    public List<Bot> getBots() {
+    public Set<Bot> getBots() {
         return bots;
     }
 
-    public void setBots(List<Bot> bots) {
+    public void setBots(Set<Bot> bots) {
         this.bots = bots;
     }
 
-    public List<Channel> getChannels() {
+    public Set<Channel> getChannels() {
         return channels;
     }
 
-    public void setChannels(List<Channel> channels) {
+    public void setChannels(Set<Channel> channels) {
         this.channels = channels;
     }
 

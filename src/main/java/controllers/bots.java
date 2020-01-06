@@ -2,16 +2,14 @@ package controllers;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
 
 import entity.Bot;
 import entity.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
@@ -75,7 +73,7 @@ public class bots {
             alert.setTitle("Delete Bot");
             alert.setHeaderText("Are you sure that you want to delete bot with specified data.");
             Bot b=tableview.getSelectionModel().getSelectedItem();
-            alert.setContentText("Name: " + b.getName() + "\r\nSurname: " + b.getFunctions());
+            alert.setContentText("Name: " + b.getName() + "\r\nFunctions: " + b.getFunctions());
 
 
             Optional<ButtonType> result = alert.showAndWait();
@@ -204,7 +202,7 @@ public class bots {
         System.out.println("----------------------");
     }
 
-    private List<Bot> Bots = new ArrayList<Bot>();
+    private Set<Bot> Bots;
 
     public void setCustomerData(Customer c) {
         this.c=c;
@@ -216,7 +214,7 @@ public class bots {
         loadview(Bots);
     }
 
-    void loadview(List<Bot> Bots)
+    void loadview(Set<Bot> Bots)
     {
         System.out.println("---------");
         System.out.println("refreshing bots view");
@@ -225,8 +223,11 @@ public class bots {
         System.out.println("---------");
     }
 
-    SortedList<Bot> sortedList(List<Bot> Bots){
-        ObservableList<Bot> botsxml=(ObservableList<Bot>) FXCollections.observableList(Bots);
+    SortedList<Bot> sortedList(Set<Bot> Bots){
+
+        List<?> test = new ArrayList<Bot>(Bots);
+        ObservableList<Bot> botsxml=(ObservableList<Bot>) FXCollections.observableList(test);
+
         FilteredList<Bot> filteredList=new FilteredList<Bot>(botsxml);
 
         Predicate predicate=new Predicate() {

@@ -68,7 +68,7 @@ public class addChannel {
             Session session = sessionFactory.openSession();
             session.beginTransaction();
 
-            session.update(channel);
+            session.update(c);
             session.getTransaction().commit();
             session.close();
 

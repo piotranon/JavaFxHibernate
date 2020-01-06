@@ -2,11 +2,10 @@ package controllers;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
 
+import entity.Bot;
 import entity.Channel;
 import entity.Customer;
 import javafx.collections.FXCollections;
@@ -18,11 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
@@ -71,12 +66,72 @@ public class channels {
 
     @FXML
     void deleteChannel(ActionEvent event) {
+        System.out.println("-----------------------");
+        System.out.println("deleting channel");
+        System.out.println("-----------------------");
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Delete Channel");
+            alert.setHeaderText("Are you sure that you want to delete channel with specified data.");
+            Channel c=tableview.getSelectionModel().getSelectedItem();
+            alert.setContentText("Name: " + c.getName() + "\r\nDescription:: " + c.getDescription());
 
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                this.c.getChannels().remove(c);
+                SessionFactory sessionFactory = hibernateSession.getSessionFactory();
+                Session session = sessionFactory.openSession();
+                session.beginTransaction();
+                session.update(this.c);
+                session.getTransaction().commit();
+                session.close();
+                reloaddata();
+                System.out.println("usunieto: "+c.toString());
+            }
+        }catch (Exception e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Channel");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select Channel first!");
+            alert.showAndWait();
+        }
+        System.out.println("-----------------------");
     }
 
     @FXML
     void editChannel(ActionEvent event) {
+        System.out.println("//////////////////");
+        System.out.println("editing channel");
+        System.out.println("//////////////////");
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/editchannel.fxml"));
+            Parent root = loader.load();
+            editChannel controller = (editChannel) loader.getController();
+
+            controller.setCustomerData(c);
+            controller.setChannel(tableview.getSelectionModel().getSelectedItem());
+
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) cancel.getScene().getWindow());
+            stage.setTitle("Customer Channels");
+            stage.setScene(scene);
+            stage.showAndWait();
+
+            reloaddata();
+        }catch (Exception e)
+        {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Select Channel");
+            alert.setHeaderText("Something went wrong.");
+            alert.setContentText("Select Bot first!");
+            alert.showAndWait();
+        }
+        System.out.println("//////////////////");
     }
 
     @FXML
@@ -110,20 +165,22 @@ public class channels {
 
     @FXML
     void reloadDataToView(ActionEvent event) {
-
+        search.setText("");
+        reloaddata();
     }
 
     @FXML
     void initialize() {
-        Name.setCellValueFactory(new PropertyValueFactory<Channel, String>("channel_name"));
-        Description.setCellValueFactory(new PropertyValueFactory<Channel, String>("channel_description"));
+        Name.setCellValueFactory(new PropertyValueFactory<Channel, String>("name"));
+        Description.setCellValueFactory(new PropertyValueFactory<Channel, String>("description"));
     }
 
     private Customer c;
-    private List<Channel> Channels = new ArrayList<Channel>();
+    private Set<Channel> Channels;
 
     public void setCustomerData(Customer c) {
         this.c=c;
+        Channels=c.getChannels();
 
         name.setText("Name: "+c.getCustomer_name());
         surname.setText("Surname: "+c.getCustomer_surname());
@@ -147,17 +204,24 @@ public class channels {
         System.out.println("----------------------");
     }
 
-    void loadview(List<Channel> Channels)
+    void loadview(Set<Channel> Channels)
     {
         System.out.println("---------");
         System.out.println("refreshing channels view");
+        System.out.println("---------");
+        System.out.println(c.toString());
         System.out.println("---------");
         tableview.setItems(sortedList(Channels));
         System.out.println("---------");
     }
 
-    SortedList<Channel> sortedList(List<Channel> Channels){
-        ObservableList<Channel> channelsxml=(ObservableList<Channel>) FXCollections.observableList(Channels);
+    SortedList<Channel> sortedList(Set<Channel> Channels2){
+
+        List<?> test=new ArrayList<Channel>(Channels2);
+        System.out.println("lista: "+test.toString());
+
+        ObservableList<Channel> channelsxml=(ObservableList<Channel>) FXCollections.observableList(test);
+
         FilteredList<Channel> filteredList=new FilteredList<Channel>(channelsxml);
 
         Predicate predicate=new Predicate() {

@@ -1,6 +1,8 @@
 package controllers;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import entity.Bot;
@@ -61,13 +63,9 @@ public class editbots {
             alert.show();
         }else
         {
-//          powinnien byc updatowany bot a nie zmieniany
-//          potrzeba referencje do obiektu z listy jezeli istnieje
+            List<Bot> bots=new ArrayList<Bot>(c.getBots());
 
-//            botList.remove(bot);
-//            botList.add(bot2);
-
-            Bot edited=c.getBots().get(c.getBots().indexOf(b));
+            Bot edited=bots.get(bots.indexOf(b));
 
             edited.setName(name.getText());
             edited.setFunctions(function.getText());
@@ -101,7 +99,7 @@ public class editbots {
 
     void setBot(Bot b){
         this.b=b;
-        name.setText(c.getBots().get(c.getBots().indexOf(b)).getName());
-        function.setText(c.getBots().get(c.getBots().indexOf(b)).getFunctions());
+        name.setText(b.getName());
+        function.setText(b.getFunctions());
     }
 }
