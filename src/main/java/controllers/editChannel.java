@@ -2,6 +2,7 @@ package controllers;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -63,16 +64,22 @@ public class editChannel {
         {
             List<Channel> channels = new ArrayList<Channel>(c.getChannels());
 
-            Channel channel=channels.get(channels.indexOf(this.channel));
+            Channel edited=channels.get(channels.indexOf(channel));
+            System.out.println(channels.toString());
+            edited.setName(name.getText());
+            edited.setDescription(description.getText());
+            System.out.println(channels.toString());
 
-            channel.setName(name.getText());
-            channel.setDescription(name.getText());
+//            System.out.println("channels   :  "+c.getChannels().toString());
+//            c.getChannels().clear();
+//            c.setChannels(new HashSet<Channel>(channels));
+//            System.out.println("channels   :  "+c.getChannels().toString());
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
             Session session = sessionFactory.openSession();
             session.beginTransaction();
 
-            session.update(c);
+            session.update(edited);
             session.getTransaction().commit();
             session.close();
 

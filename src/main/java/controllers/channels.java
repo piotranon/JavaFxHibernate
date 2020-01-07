@@ -73,17 +73,17 @@ public class channels {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Delete Channel");
             alert.setHeaderText("Are you sure that you want to delete channel with specified data.");
-            Channel c=tableview.getSelectionModel().getSelectedItem();
-            alert.setContentText("Name: " + c.getName() + "\r\nDescription:: " + c.getDescription());
-
+            Channel ch=tableview.getSelectionModel().getSelectedItem();
+            alert.setContentText("Name: " + ch.getName() + "\r\nDescription:: " + ch.getDescription());
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                this.c.getChannels().remove(c);
+                this.c.getChannels().remove(ch);
                 SessionFactory sessionFactory = hibernateSession.getSessionFactory();
                 Session session = sessionFactory.openSession();
                 session.beginTransaction();
                 session.update(this.c);
+                session.remove(ch);
                 session.getTransaction().commit();
                 session.close();
                 reloaddata();
@@ -94,7 +94,7 @@ public class channels {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Channel");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Channel first!");
+            alert.setContentText("Select Channel first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("-----------------------");
@@ -128,7 +128,7 @@ public class channels {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Channel");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!");
+            alert.setContentText("Select Bot first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("//////////////////");
@@ -145,7 +145,12 @@ public class channels {
         System.out.println("new channel");
         System.out.println("+++++++++++++++++");
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/addChannel.fxml"));
+        URL url=getClass().getResource("/scenes/addChannel.fxml");
+        FXMLLoader loader = new FXMLLoader(url);
+        if(loader == null)
+        {
+            throw new RuntimeException ("Could not find: "+url.toString());
+        }
         Parent root = loader.load();
         addChannel controller=(addChannel) loader.getController();
         controller.setCustomerData(c);
@@ -182,6 +187,10 @@ public class channels {
         this.c=c;
         Channels=c.getChannels();
 
+        System.out.println("customer channels: ");
+        System.out.println(Channels.toString());
+
+
         name.setText("Name: "+c.getCustomer_name());
         surname.setText("Surname: "+c.getCustomer_surname());
         date.setText("Date_joined: "+c.getDate_joined().toString());
@@ -199,6 +208,8 @@ public class channels {
         session.beginTransaction();
 
         setCustomerData(session.load(Customer.class,c.getId()));
+//        List<Channel> channels=new ArrayList<Channel>(session.load(Channel.class,c.getId()));
+//        channels=new HashSet();
 
         session.close();
         System.out.println("----------------------");

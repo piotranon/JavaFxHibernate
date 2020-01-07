@@ -68,7 +68,8 @@ public class addbots {
             Session session = sessionFactory.openSession();
             session.beginTransaction();
 
-            session.update(c);
+            session.merge(c);
+
             session.getTransaction().commit();
             session.close();
 

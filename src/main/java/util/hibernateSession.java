@@ -56,6 +56,8 @@ public class hibernateSession {
         List<T> data = session.createQuery(criteria).getResultList();
         return data;
     }
+
+
 //    public static List<Customer> loadCustomers( Session session)
 //    {
 //        List<Customer> customers;

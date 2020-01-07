@@ -108,7 +108,7 @@ public class customers {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!");
+            alert.setContentText("Select customer first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("--------------------");
@@ -142,7 +142,7 @@ public class customers {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!");
+            alert.setContentText("Select customer first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("////////////////////////");
@@ -173,14 +173,14 @@ public class customers {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.showAndWait();
-//            reloaddata();
+            reloaddata();
 
         }catch (Exception e)
         {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Customer");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!");
+            alert.setContentText("Select customer first!\r\n"+e.toString());
             alert.showAndWait();
             e.printStackTrace();
         }
@@ -203,7 +203,7 @@ public class customers {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
             stage.showAndWait();
-//            reloaddata();
+            reloaddata();
 
         }catch (Exception e)
         {
@@ -229,15 +229,23 @@ public class customers {
 
         reloaddata();
     }
+
+    public void shutdown(){
+        session.close();
+    }
+    private SessionFactory sessionFactory;
+    private Session session;
+
     public void reloaddata(){
         System.out.println("----------------------");
         System.out.println("reloading customer data");
         System.out.println("----------------------");
-        SessionFactory sessionFactory = hibernateSession.getSessionFactory();
-        Session session = sessionFactory.openSession();
+        sessionFactory = hibernateSession.getSessionFactory();
+        session = sessionFactory.openSession();
         session.beginTransaction();
 
         setCustomers(hibernateSession.loadAllData(Customer.class, session));
+        session.getTransaction().commit();
 
         session.close();
         System.out.println("----------------------");

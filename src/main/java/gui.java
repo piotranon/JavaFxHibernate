@@ -22,6 +22,13 @@ public class gui extends Application {
         primaryStage.setTitle("JavaFX Hibernate");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+//
+//        opisane ze ni9e powinno pracowac sie na set<>
+//            slaba optymalizacja (moze przy wiekszej ilosci danych szybko pamiec sie przeladowac)
+//        
+//        https://vladmihalcea.com/hibernate-multiplebagfetchexception/
+//
+//
 
     }
 

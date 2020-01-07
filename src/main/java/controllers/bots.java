@@ -83,6 +83,7 @@ public class bots {
                 Session session = sessionFactory.openSession();
                 session.beginTransaction();
                 session.update(c);
+                session.remove(b);
                 session.getTransaction().commit();
                 session.close();
                 reloaddata();
@@ -93,7 +94,7 @@ public class bots {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Bot");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!");
+            alert.setContentText("Select Bot first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("-----------------------");
@@ -127,7 +128,7 @@ public class bots {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Select Bot");
             alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!");
+            alert.setContentText("Select Bot first!\r\n"+e.toString());
             alert.showAndWait();
         }
         System.out.println("//////////////////");

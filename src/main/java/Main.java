@@ -1,10 +1,13 @@
 import controllers.bots;
+import entity.Bot;
+import entity.Channel;
 import entity.Customer;
 import javafx.fxml.FXMLLoader;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.hibernateSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -19,7 +22,17 @@ public class Main {
 
 
         List<Customer> Customers = hibernateSession.loadAllData(Customer.class, session);
+        List<Channel> channels =hibernateSession.loadAllData(Channel.class,session);
+        System.out.println("??????????????CHANNELS");
 
+        System.out.println(channels.toString());
+
+        channels.get(0).setName("adam223");
+
+        System.out.println("transaction: "+hibernateSession.getSessionFactory().getCurrentSession().getTransaction().getStatus());
+
+
+        System.out.println(channels.toString());
 
         System.out.println("rozmiar " + Customers.size());
         for (int i = 0; i < Customers.size(); i++) {
@@ -27,6 +40,9 @@ public class Main {
         }
         Customers.get(0).setCustomer_name("adam");
         session.update(Customers.get(0));
+        List<Bot> bots=new ArrayList<Bot>(Customers.get(0).getBots());
+
+        session.update(bots);
         session.getTransaction().commit();
 //        session.delete(customer);
 //        session.remove(customers.get(3));
