@@ -68,7 +68,7 @@ public class editbots {
             Bot edited=bots.get(bots.indexOf(b));
 
             edited.setName(name.getText());
-            edited.setFunctions(function.getText());
+//            edited.setFunctions(function.getText());
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
             Session session = sessionFactory.openSession();
@@ -100,6 +100,6 @@ public class editbots {
     void setBot(Bot b){
         this.b=b;
         name.setText(b.getName());
-        function.setText(b.getFunctions());
+//        function.setText(b.getFunctions());
     }
 }

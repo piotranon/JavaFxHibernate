@@ -30,5 +30,7 @@
         <mapping class="entity.Customer"/>
         <mapping class="entity.Bot"/>
         <mapping class="entity.Channel"/>
+        <mapping class="entity.Function"/>
+
     </session-factory>
 </hibernate-configuration>

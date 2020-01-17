@@ -19,5 +19,8 @@ public class test extends Application {
         stage.setTitle("Customer Bots");
         stage.setScene(scene);
         stage.show();
+
+        int a=Integer.MAX_VALUE;
+        System.out.println("max: "+a);
     }
 }

@@ -239,9 +239,6 @@ public class bots {
                 if(b.getName().toLowerCase().contains(search.getText().toLowerCase()))
                 {
                     return true;
-                }else if(b.getFunctions().toLowerCase().contains(search.getText().toLowerCase()))
-                {
-                    return true;
                 }
                 return false;
             }

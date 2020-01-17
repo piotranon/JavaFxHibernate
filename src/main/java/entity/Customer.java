@@ -3,8 +3,6 @@ package entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,6 +19,9 @@ public class Customer implements Serializable {
     @Column(name="customer_surname")
     private String customer_surname;
 
+    @Column(name = "customer_nip",nullable = false,unique = true)
+    private long customer_nip;
+
     @Column(name="date_joined")
     private Date date_joined;
 
@@ -30,6 +31,14 @@ public class Customer implements Serializable {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Channel> channels = null;
 
+    public long getCustomer_nip() {
+        return customer_nip;
+    }
+
+    public void setCustomer_nip(long customer_nip) {
+        this.customer_nip = customer_nip;
+    }
+
     public Customer() {
     }
 
@@ -38,6 +47,7 @@ public class Customer implements Serializable {
         this.customer_surname=customer.customer_surname;
         this.date_joined=customer.date_joined;
         this.id=customer.id;
+        this.customer_nip=customer.customer_nip;
         this.bots = customer.bots;
     }
 
@@ -49,7 +59,7 @@ public class Customer implements Serializable {
         this.bots = bots;
     }
 
-    public long getId() {
+    public Serializable getId() {
         return id;
     }
 
@@ -103,6 +113,7 @@ public class Customer implements Serializable {
                 "id=" + id +
                 ", customer_name='" + customer_name + '\'' +
                 ", customer_surname='" + customer_surname + '\'' +
+                ", customer_nip=" + customer_nip +
                 ", date_joined=" + date_joined +
                 ", bots=" + bots.toString() +
                 ", channels=" + channels.toString() +

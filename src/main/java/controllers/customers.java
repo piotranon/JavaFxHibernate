@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,19 +14,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.annotations.QueryHints;
 import util.hibernateSession;
 
-import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.metamodel.Metamodel;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -33,7 +29,7 @@ import java.util.function.Predicate;
 public class customers {
 
     @FXML
-    private Button customers;
+    private Button close;
 
     @FXML
     private TableView<Customer> tableview;
@@ -48,6 +44,9 @@ public class customers {
     private TableColumn<Customer, Date> join_date;
 
     @FXML
+    private TableColumn<Customer, Long> pin;
+
+    @FXML
     private Button newCustomer;
 
     @FXML
@@ -55,13 +54,37 @@ public class customers {
 
     private Stage parentStage;
 
+    private double xOffset = 0;
+    private double yOffset = 0;
+
     @FXML
     void newCustomer(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/addCustomer.fxml"));
         Parent root = loader.load();
-
         Scene scene = new Scene(root);
         Stage stage = new Stage();
+        // no toolbar
+        stage.initStyle(StageStyle.UNDECORATED);
+        xOffset=0;
+        yOffset=0;
+        //move window easly
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        });
+
+
+
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(parentStage);
         stage.setTitle("Create new Customer");
@@ -77,6 +100,12 @@ public class customers {
         System.out.println("++++++++++++++++");
 
         reloaddata();
+        reloaddata();
+    }
+    @FXML
+    void close(ActionEvent event) {
+        Stage stage = (Stage) close.getScene().getWindow();
+        stage.close();
     }
     @FXML
     void deleteCustomer(ActionEvent event) {
@@ -126,10 +155,30 @@ public class customers {
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+
+
 
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(parentStage);
-
             stage.setTitle("Edit Customer");
             stage.setScene(scene);
             editCustomer controller = (editCustomer) loader.getController();
@@ -226,6 +275,7 @@ public class customers {
         name.setCellValueFactory(new PropertyValueFactory<Customer, String>("customer_name"));
         surname.setCellValueFactory(new PropertyValueFactory<Customer, String>("customer_surname"));
         join_date.setCellValueFactory(new PropertyValueFactory<Customer, Date>("date_joined"));
+        pin.setCellValueFactory(new PropertyValueFactory<Customer,Long>("customer_nip"));
 
         reloaddata();
     }

@@ -2,6 +2,8 @@ package entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "bot")
@@ -18,15 +20,30 @@ public class Bot implements Serializable {
     @Column(name = "bot_name")
     private String name;
 
-    @Column(name = "bot_functions")
-    private String functions;
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name="bot_function",
+        joinColumns = @JoinColumn(name="bot_id"),
+            inverseJoinColumns = @JoinColumn(name = "function_id")
+    )
+    private Set<Function> functions=new HashSet<>();
 
-    public Bot(){}
+    public Bot() {
+    }
 
-    public Bot(Customer customer, String name, String functions) {
-        this.customer = customer;
-        this.name = name;
-        this.functions = functions;
+    public Bot(Customer customer,String name)
+    {
+        this.customer=customer;
+        this.name=name;
+    }
+
+    public Bot(Customer customer,String name,Set<Function> functions)
+    {
+        this.customer=customer;
+        this.functions=functions;
+        this.name=name;
     }
 
     public Bot(Bot bot)
@@ -61,11 +78,11 @@ public class Bot implements Serializable {
         this.name = name;
     }
 
-    public String getFunctions() {
+    public Set<Function> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(String functions) {
+    public void setFunctions(Set<Function> functions) {
         this.functions = functions;
     }
 
@@ -75,7 +92,7 @@ public class Bot implements Serializable {
                 "id=" + id +
                 ", Customer_id=" + customer.getId() +
                 ", name='" + name + '\'' +
-                ", Functions='" + functions + '\'' +
+                ", Functions='" + functions.toString() + '\'' +
                 '}';
     }
 }

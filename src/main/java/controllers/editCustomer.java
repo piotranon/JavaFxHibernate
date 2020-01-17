@@ -29,6 +29,9 @@ public class editCustomer {
     private TextField surname;
 
     @FXML
+    private TextField pin;
+
+    @FXML
     private DatePicker date_joined;
 
     @FXML
@@ -53,6 +56,17 @@ public class editCustomer {
         if(surname.getText().length()<=0)
         {
             errors.append("Surname is missing. \r\n");
+            missingdata=true;
+        }
+        if(pin.getText().length()!=11)
+        {
+            try{
+                Long l=Long.parseLong(pin.getText());
+            }catch (NumberFormatException e)
+            {
+                errors.append("Pin should only include numbers. \r\n");
+            }
+            errors.append("Pin length is wrong. \r\n");
             missingdata=true;
         }
         if(LocalDate.now().isBefore(date_joined.getValue()))
@@ -122,6 +136,7 @@ public class editCustomer {
     void setCustomerData(Customer c){
         name.setText(c.getCustomer_name());
         surname.setText(c.getCustomer_surname());
+        pin.setText(""+c.getCustomer_nip());
         date_joined.setValue(c.getDate_joined().toLocalDate());
         this.c=c;
     }

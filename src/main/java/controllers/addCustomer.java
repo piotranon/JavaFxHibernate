@@ -2,6 +2,7 @@ package controllers;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import entity.Customer;
@@ -40,6 +41,9 @@ public class addCustomer {
     private Button cancel;
 
     @FXML
+    private TextField pin;
+
+    @FXML
     void Add(ActionEvent event) {
         StringBuilder errors=new StringBuilder();
         boolean missingdata=false;
@@ -51,6 +55,17 @@ public class addCustomer {
         if(surname.getText().length()<=0)
         {
             errors.append("Surname is missing. \r\n");
+            missingdata=true;
+        }
+        if(pin.getText().length()!=11)
+        {
+            try{
+                Long l=Long.parseLong(pin.getText());
+            }catch (NumberFormatException e)
+            {
+                errors.append("Pin should only include numbers. \r\n");
+            }
+            errors.append("Pin length is wrong. \r\n");
             missingdata=true;
         }
         if(LocalDate.now().isBefore(date_joined.getValue()))
@@ -67,10 +82,12 @@ public class addCustomer {
             alert.show();
         }else
         {
+
             Customer customer = new Customer();
 
             customer.setCustomer_name(name.getText());
             customer.setCustomer_surname(surname.getText());
+            customer.setCustomer_nip(Long.parseLong(pin.getText()));
             customer.setDate_joined(java.sql.Date.valueOf(date_joined.getValue()));
 
             SessionFactory sessionFactory = hibernateSession.getSessionFactory();
@@ -98,6 +115,13 @@ public class addCustomer {
         assert date_joined != null : "fx:id=\"date_joined\" was not injected: check your FXML file 'addCustomer.fxml'.";
         assert createNewCustomer != null : "fx:id=\"createNewCustomer\" was not injected: check your FXML file 'addCustomer.fxml'.";
         assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'addCustomer.fxml'.";
+        String[] names={"liver ","Harry ","Charlie ","Noah ","George ","Jack ","Alfie ","Leo ","Jacob ","Freddie ","Oscar ","Theo ","Archie ","Arthur ","Logan ","Joshua ","Thomas ","James ","Henry ","Max ","Lucas ","Ethan ","William ","Isaac ","Mason ","Riley ","Harrison ","Finley ","Tommy ","Teddy ","Dylan ","Daniel ","Tyler ","Adam ","Joseph ","Alexander ","Elijah ","Jayden ","Louie ","Arlo ","Hunter ","Jake ","Jaxon ","Reggie ","Frankie ","Harley ","Albie ","Harvey ","Toby ","Edward ","Lewis ","Sebastian ","Theodore ","Rory ","Ollie ","Alex ","Reuben ","Benjamin ","Luca ","Ryan ","Liam ","Bobby ","Carter ","Samuel ","Roman ","Louis ","David ","Hugo ","Jude ","Jenson ","Ronnie ","Zachary ","Callum ","Blake ","Jackson ","Ezra ","Kai ","Luke ","Matthew ","Michael ","Caleb ","Connor ","Elliott ","Baby ","Leon ","Jamie ","Grayson ","Nathan ","Ellis ","Stanley ","Finn ","Elliot ","Albert  ","Aaron ","Gabriel ","Cameron ","Ben ","Dexter ","Oakley","Eli"};
+
+        Random r=new Random();
+        int a=r.nextInt(names.length-1);
+        name.setText(names[a]);
+        surname.setText(names[a+1]);
+        pin.setText(r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10)+""+r.nextInt(10));
         date_joined.setValue(LocalDate.now());
     }
 }
