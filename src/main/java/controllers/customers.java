@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import util.SceneManager;
 import util.hibernateSession;
 
 import java.io.IOException;
@@ -68,6 +69,7 @@ public class customers {
         xOffset=0;
         yOffset=0;
         //move window easly
+
         root.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -75,6 +77,7 @@ public class customers {
                 yOffset = event.getSceneY();
             }
         });
+
         root.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -82,8 +85,6 @@ public class customers {
                 stage.setY(event.getScreenY() - yOffset);
             }
         });
-
-
 
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(parentStage);
@@ -108,37 +109,91 @@ public class customers {
         stage.close();
     }
     @FXML
-    void deleteCustomer(ActionEvent event) {
+    void deleteCustomer(ActionEvent event) throws IOException {
         System.out.println("--------------------");
         System.out.println("deleting customer");
         System.out.println("--------------------");
 
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Customer");
-            alert.setHeaderText("Are you sure that you want to delete customer with specified data.");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/confirm.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
 
             Customer c = new Customer(tableview.getSelectionModel().getSelectedItem());
-            alert.setContentText("Name: " + c.getCustomer_name() + "\r\nSurname: " + c.getCustomer_surname() + "\r\nDate_joined: " + c.getDate_joined());
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            confirm controller=(confirm) loader.getController();
+            controller.setAlertTitle("DELETING CUSTOMER");
+            controller.setAlertText("Are you sure that you want to delete Customer with data: \r\n\r\nName: "+c.getCustomer_name()+"\r\nSurname: "+c.getCustomer_surname()+"\r\nJoined since: "+c.getDate_joined());
+            stage.showAndWait();
 
+            if(controller.delete)
+            {
                 SessionFactory sessionFactory = hibernateSession.getSessionFactory();
                 Session session = sessionFactory.openSession();
                 session.beginTransaction();
                 session.remove(c);
                 session.getTransaction().commit();
                 session.close();
+                reloaddata();
             }
-            reloaddata();
+
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Customer");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!\r\n"+e.toString());
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select customer");
+            controller.setAlertText("PLEASE SELECT CUSTOMER");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("--------------------");
     }
@@ -188,11 +243,38 @@ public class customers {
             reloaddata();
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Customer");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!\r\n"+e.toString());
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select customer");
+            controller.setAlertText("PLEASE SELECT CUSTOMER");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("////////////////////////");
     }
@@ -211,59 +293,158 @@ public class customers {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/bots.fxml"));
             Parent root = loader.load();
+
             bots controller=(bots) loader.getController();
             controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();
 
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
+
             stage.setTitle("Customer Bots");
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(parentStage);
-            stage.showAndWait();
-            reloaddata();
+
+            close(new ActionEvent());
+            stage.show();
 
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Customer");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!\r\n"+e.toString());
-            alert.showAndWait();
-            e.printStackTrace();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select customer");
+            controller.setAlertText("PLEASE SELECT CUSTOMER");
+            controller.ramka();
+            stage.showAndWait();
         }
 
     }
 
     @FXML
-    void editCustomerChannels(ActionEvent event) {
+    void editCustomerChannels(ActionEvent event) throws IOException {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/channels.fxml"));
             Parent root = loader.load();
+
             channels controller=(channels) loader.getController();
             controller.setCustomerData(tableview.getSelectionModel().getSelectedItem());
 
             Scene scene = new Scene(root);
             Stage stage = new Stage();
 
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
+
             stage.setTitle("Customer Bots");
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(parentStage);
-            stage.showAndWait();
-            reloaddata();
+
+            close(new ActionEvent());
+            stage.show();
 
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Customer");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select customer first!");
-            alert.showAndWait();
-            e.printStackTrace();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(parentStage);
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select customer");
+            controller.setAlertText("PLEASE SELECT CUSTOMER");
+            controller.ramka();
+            stage.showAndWait();
         }
     }
+
     @FXML
     void initialize() {
 //        assert customers != null : "fx:id=\"customers\" was not injected: check your FXML file 'customers.fxml'.";

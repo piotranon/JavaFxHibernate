@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,8 +21,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.hibernateSession;
@@ -50,6 +53,10 @@ public class channels {
     private Label date;
 
     @FXML
+    private Button close;
+
+
+    @FXML
     private TableView<Channel> tableview;
 
     @FXML
@@ -59,30 +66,96 @@ public class channels {
     private TableColumn<Channel, String> Description;
 
     @FXML
-    void cancel(ActionEvent event) {
-        Stage stage = (Stage) cancel.getScene().getWindow();
+    void close(ActionEvent event) {
+        Stage stage = (Stage) close.getScene().getWindow();
         stage.close();
+    }
+    private double xOffset;
+    private double yOffset;
+
+    @FXML
+    void cancel(ActionEvent event) throws IOException {
+        xOffset=0;
+        yOffset=0;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/customers.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        //scene
+        customers controller=(customers) loader.getController();
+        stage.setTitle("JavaFX Hibernate");
+        // no toolbar
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        //move window easly
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        });
+        stage.setScene(new Scene(root));
+        stage.show();
+
+        Stage stag = (Stage) cancel.getScene().getWindow();
+        stag.close();
     }
 
     @FXML
-    void deleteChannel(ActionEvent event) {
+    void deleteChannel(ActionEvent event) throws IOException {
         System.out.println("-----------------------");
         System.out.println("deleting channel");
         System.out.println("-----------------------");
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Channel");
-            alert.setHeaderText("Are you sure that you want to delete channel with specified data.");
-            Channel ch=tableview.getSelectionModel().getSelectedItem();
-            alert.setContentText("Name: " + ch.getName() + "\r\nDescription:: " + ch.getDescription());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/confirm.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
+            Channel ch = new Channel(tableview.getSelectionModel().getSelectedItem());
+
+            confirm controller=(confirm) loader.getController();
+            controller.setAlertTitle("DELETING CHANNEL");
+            controller.setAlertText("Are you sure that you want to delete Channel with data: \r\n\r\nName: "+ch.getName()+"\r\nDescription: "+ch.getDescription()+"\r\n");
+            stage.showAndWait();
+
+            if(controller.delete)
+            {
                 this.c.getChannels().remove(ch);
                 SessionFactory sessionFactory = hibernateSession.getSessionFactory();
                 Session session = sessionFactory.openSession();
                 session.beginTransaction();
-                session.update(this.c);
+//                session.update(this.c);
                 session.remove(ch);
                 session.getTransaction().commit();
                 session.close();
@@ -91,17 +164,45 @@ public class channels {
             }
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Channel");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Channel first!\r\n"+e.toString());
-            alert.showAndWait();
+            System.out.println(e.toString());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select Channel");
+            controller.setAlertText("PLEASE SELECT Channel");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("-----------------------");
     }
 
     @FXML
-    void editChannel(ActionEvent event) {
+    void editChannel(ActionEvent event) throws IOException {
         System.out.println("//////////////////");
         System.out.println("editing channel");
         System.out.println("//////////////////");
@@ -118,6 +219,7 @@ public class channels {
             Stage stage = new Stage();
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner((Stage) cancel.getScene().getWindow());
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.setTitle("Customer Channels");
             stage.setScene(scene);
             stage.showAndWait();
@@ -125,11 +227,38 @@ public class channels {
             reloaddata();
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Channel");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!\r\n"+e.toString());
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select Channel");
+            controller.setAlertText("PLEASE SELECT Channel");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("//////////////////");
     }
@@ -158,6 +287,7 @@ public class channels {
         Scene scene = new Scene(root);
         Stage stage = new Stage();
         stage.initModality(Modality.WINDOW_MODAL);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.initOwner((Stage)cancel.getScene().getWindow());
         stage.setTitle("Customer Channels");
         stage.setScene(scene);
@@ -178,6 +308,7 @@ public class channels {
     void initialize() {
         Name.setCellValueFactory(new PropertyValueFactory<Channel, String>("name"));
         Description.setCellValueFactory(new PropertyValueFactory<Channel, String>("description"));
+
     }
 
     private Customer c;

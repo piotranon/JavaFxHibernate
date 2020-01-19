@@ -2,6 +2,7 @@ import controllers.bots;
 import entity.Bot;
 import entity.Channel;
 import entity.Customer;
+import entity.Function;
 import javafx.fxml.FXMLLoader;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,7 +31,6 @@ public class Main {
         channels.get(0).setName("adam223");
 
         System.out.println("transaction: "+hibernateSession.getSessionFactory().getCurrentSession().getTransaction().getStatus());
-
 
         System.out.println(channels.toString());
 

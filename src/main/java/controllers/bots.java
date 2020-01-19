@@ -9,10 +9,10 @@ import entity.Bot;
 import entity.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,8 +20,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import util.hibernateSession;
@@ -61,41 +63,138 @@ public class bots {
     @FXML
     private Button cancel;
 
+    @FXML
+    private Button close;
+
     private Customer c;
+    private double xOffset;
+    private double yOffset;
 
     @FXML
-    void deleteBot(ActionEvent event) {
+    void close(ActionEvent event) {
+        Stage stage = (Stage) close.getScene().getWindow();
+        stage.close();
+    }
+    @FXML
+    void cancel(ActionEvent event) throws IOException {
+        xOffset=0;
+        yOffset=0;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/customers.fxml"));
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        //scene
+        customers controller=(customers) loader.getController();
+        stage.setTitle("JavaFX Hibernate");
+        // no toolbar
+        stage.initStyle(StageStyle.UNDECORATED);
+
+        //move window easly
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        });
+        stage.setScene(new Scene(root));
+        stage.show();
+
+        Stage stag = (Stage) cancel.getScene().getWindow();
+        stag.close();
+    }
+    @FXML
+    void deleteBot(ActionEvent event) throws IOException {
         System.out.println("-----------------------");
         System.out.println("deleting bot");
         System.out.println("-----------------------");
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Delete Bot");
-            alert.setHeaderText("Are you sure that you want to delete bot with specified data.");
-            Bot b=tableview.getSelectionModel().getSelectedItem();
-            alert.setContentText("Name: " + b.getName() + "\r\nFunctions: " + b.getFunctions());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/confirm.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
 
+            Bot b = new Bot(tableview.getSelectionModel().getSelectedItem());
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                c.getBots().remove(b);
+            confirm controller=(confirm) loader.getController();
+            controller.setAlertTitle("DELETING Bot");
+            controller.setAlertText("Are you sure that you want to delete Bot with data: \r\n\r\nName: "+b.getName()+"\r\nFunction: "+b.getFunctions()+"\r\n");
+
+            stage.showAndWait();
+
+            if(controller.delete)
+            {
                 SessionFactory sessionFactory = hibernateSession.getSessionFactory();
                 Session session = sessionFactory.openSession();
                 session.beginTransaction();
-                session.update(c);
                 session.remove(b);
                 session.getTransaction().commit();
                 session.close();
                 reloaddata();
-                System.out.println("usunieto: "+b.toString());
             }
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Bot");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!\r\n"+e.toString());
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select Bot");
+            controller.setAlertText("PLEASE SELECT Bot");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("-----------------------");
     }
@@ -114,9 +213,31 @@ public class bots {
             controller.setCustomerData(c);
             controller.setBot(tableview.getSelectionModel().getSelectedItem());
 
-            Scene scene = new Scene(root);
+
             Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            Scene scene = new Scene(root);
             stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
             stage.initOwner((Stage) cancel.getScene().getWindow());
             stage.setTitle("Customer Bots");
             stage.setScene(scene);
@@ -125,11 +246,38 @@ public class bots {
             reloaddata();
         }catch (Exception e)
         {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Select Bot");
-            alert.setHeaderText("Something went wrong.");
-            alert.setContentText("Select Bot first!\r\n"+e.toString());
-            alert.showAndWait();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/alert.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            // no toolbar
+            stage.initStyle(StageStyle.UNDECORATED);
+            xOffset=0;
+            yOffset=0;
+            //move window easly
+            root.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    xOffset = event.getSceneX();
+                    yOffset = event.getSceneY();
+                }
+            });
+            root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    stage.setX(event.getScreenX() - xOffset);
+                    stage.setY(event.getScreenY() - yOffset);
+                }
+            });
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner((Stage) close.getScene().getWindow());
+            stage.setScene(scene);
+
+            alert controller=(alert) loader.getController();
+            controller.setAlertTitle("Select Bot");
+            controller.setAlertText("PLEASE SELECT Bot");
+            controller.ramka();
+            stage.showAndWait();
         }
         System.out.println("//////////////////");
     }
@@ -158,9 +306,27 @@ public class bots {
 
         Scene scene = new Scene(root);
         Stage stage = new Stage();
+        // no toolbar
+        stage.initStyle(StageStyle.UNDECORATED);
+        xOffset=0;
+        yOffset=0;
+        //move window easly
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        });
         stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner((Stage)cancel.getScene().getWindow());
-        stage.setTitle("Customer Bots");
+        stage.initOwner((Stage) close.getScene().getWindow());
         stage.setScene(scene);
         stage.showAndWait();
 
@@ -180,12 +346,6 @@ public class bots {
 
         Name.setCellValueFactory(new PropertyValueFactory<Bot, String >("name"));
         Function.setCellValueFactory(new PropertyValueFactory<Bot, String>("Functions"));
-    }
-
-    @FXML
-    void cancel(ActionEvent event) {
-        Stage stage = (Stage) cancel.getScene().getWindow();
-        stage.close();
     }
 
     public void reloaddata(){
@@ -211,7 +371,7 @@ public class bots {
         name.setText("Name: "+c.getCustomer_name());
         surname.setText("Surname: "+c.getCustomer_surname());
         date.setText("Date_joined: "+c.getDate_joined().toString());
-
+//        System.out.println();
         loadview(Bots);
     }
 
@@ -225,8 +385,10 @@ public class bots {
     }
 
     SortedList<Bot> sortedList(Set<Bot> Bots){
+        List<Bot> test = new ArrayList<Bot>(Bots);
+        System.out.println("listA"+test.toString());
 
-        List<?> test = new ArrayList<Bot>(Bots);
+
         ObservableList<Bot> botsxml=(ObservableList<Bot>) FXCollections.observableList(test);
 
         FilteredList<Bot> filteredList=new FilteredList<Bot>(botsxml);
@@ -236,10 +398,11 @@ public class bots {
 
                 Bot b =new Bot((Bot) o);
 
-                if(b.getName().toLowerCase().contains(search.getText().toLowerCase()))
-                {
+                if(b.getName().toLowerCase().toLowerCase().contains(search.getText().toLowerCase()))
                     return true;
-                }
+                if(b.getFunctions().getName().toLowerCase().contains(search.getText().toLowerCase()))
+                    return true;
+
                 return false;
             }
         };

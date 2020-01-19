@@ -20,15 +20,9 @@ public class Bot implements Serializable {
     @Column(name = "bot_name")
     private String name;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name="bot_function",
-        joinColumns = @JoinColumn(name="bot_id"),
-            inverseJoinColumns = @JoinColumn(name = "function_id")
-    )
-    private Set<Function> functions=new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name="function_id",referencedColumnName ="function_id", nullable = false)
+    private Function function;
 
     public Bot() {
     }
@@ -39,17 +33,17 @@ public class Bot implements Serializable {
         this.name=name;
     }
 
-    public Bot(Customer customer,String name,Set<Function> functions)
+    public Bot(Customer customer,String name,Function function)
     {
         this.customer=customer;
-        this.functions=functions;
+        this.function=function;
         this.name=name;
     }
 
     public Bot(Bot bot)
     {
         this.customer=bot.customer;
-        this.functions=bot.functions;
+        this.function=bot.function;
         this.name=bot.name;
         this.id=bot.id;
     }
@@ -78,12 +72,12 @@ public class Bot implements Serializable {
         this.name = name;
     }
 
-    public Set<Function> getFunctions() {
-        return functions;
+    public Function getFunctions() {
+        return function;
     }
 
-    public void setFunctions(Set<Function> functions) {
-        this.functions = functions;
+    public void setFunctions(Function function) {
+        this.function = function;
     }
 
     @Override
@@ -92,7 +86,7 @@ public class Bot implements Serializable {
                 "id=" + id +
                 ", Customer_id=" + customer.getId() +
                 ", name='" + name + '\'' +
-                ", Functions='" + functions.toString() + '\'' +
+                ", Functions='" + function.toString() + '\'' +
                 '}';
     }
 }

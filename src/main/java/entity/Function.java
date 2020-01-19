@@ -16,21 +16,26 @@ public class Function {
 
     @NaturalId
     @Column(name="function_name")
-    private String name;
+    private String function_name;
 
     @Column(name="function_description")
     private String desc;
 
     private int price;
 
-    @ManyToMany(mappedBy="functions")
+    @OneToMany
     private Set<Bot> bots=new HashSet<>();
 
     public Function(String name, String desc, int price, Set<Bot> bots) {
-        this.name = name;
+        this.function_name = name;
         this.desc = desc;
         this.price = price;
         this.bots = bots;
+    }
+    public Function(String name, String desc, int price) {
+        this.function_name = name;
+        this.desc = desc;
+        this.price = price;
     }
 
     public Function() {
@@ -45,11 +50,11 @@ public class Function {
     }
 
     public String getName() {
-        return name;
+        return function_name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.function_name = name;
     }
 
     public String getDesc() {
@@ -80,10 +85,10 @@ public class Function {
     public String toString() {
         return "Functions{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + function_name + '\'' +
                 ", desc='" + desc + '\'' +
                 ", price=" + price +
-                ", bots=" + bots.toString() +
+                ", bots=" + bots.getClass().getName() +
                 '}';
     }
 }

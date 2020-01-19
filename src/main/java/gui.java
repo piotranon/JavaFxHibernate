@@ -19,6 +19,7 @@ public class gui extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 //        System.out.println(getClass().getResource(".fxml").toString());
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("scenes/customers.fxml"));
         Parent root = loader.load();
         //scene

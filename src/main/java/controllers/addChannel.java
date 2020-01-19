@@ -1,6 +1,7 @@
 package controllers;
 
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 
@@ -86,7 +87,12 @@ public class addChannel {
     void initialize() {
         assert name != null : "fx:id=\"name\" was not injected: check your FXML file 'addChannel.fxml'.";
         assert description != null : "fx:id=\"description\" was not injected: check your FXML file 'addChannel.fxml'.";
+        String[] names={"liver ","Harry ","Charlie ","Noah ","George ","Jack ","Alfie ","Leo ","Jacob ","Freddie ","Oscar ","Theo ","Archie ","Arthur ","Logan ","Joshua ","Thomas ","James ","Henry ","Max ","Lucas ","Ethan ","William ","Isaac ","Mason ","Riley ","Harrison ","Finley ","Tommy ","Teddy ","Dylan ","Daniel ","Tyler ","Adam ","Joseph ","Alexander ","Elijah ","Jayden ","Louie ","Arlo ","Hunter ","Jake ","Jaxon ","Reggie ","Frankie ","Harley ","Albie ","Harvey ","Toby ","Edward ","Lewis ","Sebastian ","Theodore ","Rory ","Ollie ","Alex ","Reuben ","Benjamin ","Luca ","Ryan ","Liam ","Bobby ","Carter ","Samuel ","Roman ","Louis ","David ","Hugo ","Jude ","Jenson ","Ronnie ","Zachary ","Callum ","Blake ","Jackson ","Ezra ","Kai ","Luke ","Matthew ","Michael ","Caleb ","Connor ","Elliott ","Baby ","Leon ","Jamie ","Grayson ","Nathan ","Ellis ","Stanley ","Finn ","Elliot ","Albert  ","Aaron ","Gabriel ","Cameron ","Ben ","Dexter ","Oakley","Eli"};
 
+        Random r=new Random();
+
+        name.setText(names[r.nextInt(names.length)]);
+        description.setText(names[r.nextInt(names.length)]+" "+names[r.nextInt(names.length)]+" "+names[r.nextInt(names.length)]);
     }
     private Customer c;
     void setCustomerData(Customer c)
