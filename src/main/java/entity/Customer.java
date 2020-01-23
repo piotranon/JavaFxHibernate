@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.Set;
 
 @Entity
+
 @Table(name="customer")
 public class Customer implements Serializable {
     @Id

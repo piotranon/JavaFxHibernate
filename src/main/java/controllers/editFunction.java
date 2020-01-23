@@ -39,7 +39,8 @@ public class editFunction {
         f.setName(name.getText());
         f.setDesc(description.getText());
         f.setPrice(Double.valueOf(price.getText()));
-        System.out.println("id: "+f.getId());
+
+        System.out.println("id: "+f.toString());
         SessionFactory sessionFactory = hibernateSession.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();

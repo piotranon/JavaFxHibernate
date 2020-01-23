@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+
 @Table(name="channel")
 public class Channel implements Serializable {
     @Id

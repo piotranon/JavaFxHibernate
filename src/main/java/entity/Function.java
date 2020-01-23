@@ -3,8 +3,10 @@ package entity;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity(name="Function")
 @Table(name="functions")
@@ -14,7 +16,6 @@ public class Function {
     @Column(name="function_id")
     private Long id;
 
-    @NaturalId
     @Column(name="function_name")
     private String function_name;
 
