@@ -21,10 +21,13 @@ public class Function {
     @Column(name="function_description")
     private String desc;
 
-    private int price;
+    private double price;
 
     @OneToMany
     private Set<Bot> bots=new HashSet<>();
+
+    public Function() {
+    }
 
     public Function(String name, String desc, int price, Set<Bot> bots) {
         this.function_name = name;
@@ -38,7 +41,11 @@ public class Function {
         this.price = price;
     }
 
-    public Function() {
+    public Function(Function o) {
+        this.function_name = o.getName();
+        this.desc = o.getDesc();
+        this.price = o.getPrice();
+        this.bots = o.getBots();
     }
 
     public Long getId() {
@@ -65,11 +72,11 @@ public class Function {
         this.desc = desc;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

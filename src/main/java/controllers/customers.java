@@ -318,10 +318,6 @@ public class customers {
                     stage.setY(event.getScreenY() - yOffset);
                 }
             });
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(parentStage);
-            stage.setScene(scene);
-
             stage.setTitle("Customer Bots");
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);

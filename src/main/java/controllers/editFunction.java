@@ -13,8 +13,7 @@ package controllers;
         import org.hibernate.SessionFactory;
         import util.hibernateSession;
 
-public class addFunction {
-
+public class editFunction {
 
     @FXML
     private ResourceBundle resources;
@@ -26,28 +25,25 @@ public class addFunction {
     private TextField name;
 
     @FXML
+    private Button cancel;
+
+    @FXML
     private TextField description;
 
     @FXML
     private TextField price;
 
     @FXML
-    private Button cancel;
+    void Update(ActionEvent event) {
 
-    @FXML
-    void Add(ActionEvent event) {
-        String name=this.name.getText();
-        String description=this.description.getText();
-        String price=this.price.getText();
-
-        Function f=new Function(name,description,Integer.valueOf(price));
-
+        f.setName(name.getText());
+        f.setDesc(description.getText());
+        f.setPrice(Double.valueOf(price.getText()));
+        System.out.println("id: "+f.getId());
         SessionFactory sessionFactory = hibernateSession.getSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-
-        session.save(f);
-
+        session.update(f);
         session.getTransaction().commit();
         session.close();
 
@@ -60,10 +56,21 @@ public class addFunction {
         stage.close();
     }
 
+    private Function f;
+    public void setfunction(Function f)
+    {
+        this.f=f;
+        name.setText(f.getName());
+        description.setText(f.getDesc());
+        price.setText(String.valueOf(f.getPrice()));
+    }
+
     @FXML
     void initialize() {
-        assert name != null : "fx:id=\"name\" was not injected: check your FXML file 'addfunction.fxml'.";
-        assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'addfunction.fxml'.";
+        assert name != null : "fx:id=\"name\" was not injected: check your FXML file 'editFunction.fxml'.";
+        assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'editFunction.fxml'.";
+        assert description != null : "fx:id=\"description\" was not injected: check your FXML file 'editFunction.fxml'.";
+        assert price != null : "fx:id=\"price\" was not injected: check your FXML file 'editFunction.fxml'.";
 
     }
 }

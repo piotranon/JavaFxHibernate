@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import entity.Bot;
 import entity.Customer;
+import entity.Function;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -82,6 +83,8 @@ public class bots {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/customers.fxml"));
         Parent root = loader.load();
+
+        Scene scene = new Scene(root);
         Stage stage = new Stage();
         //scene
         customers controller=(customers) loader.getController();
@@ -104,11 +107,12 @@ public class bots {
                 stage.setY(event.getScreenY() - yOffset);
             }
         });
-        stage.setScene(new Scene(root));
-        stage.show();
 
-        Stage stag = (Stage) cancel.getScene().getWindow();
-        stag.close();
+        stage.setScene(scene);
+        stage.initModality(Modality.WINDOW_MODAL);
+
+        close(new ActionEvent());
+        stage.show();
     }
     @FXML
     void deleteBot(ActionEvent event) throws IOException {
@@ -291,6 +295,40 @@ public class bots {
     void reloadDataToView(ActionEvent event) {
         search.setText("");
         reloaddata();
+    }
+
+    @FXML
+    void editFunctions(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/scenes/functions.fxml"));
+        Parent root = loader.load();
+        functions controller=loader.getController();
+        controller.setCustomerData(c);
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        // no toolbar
+        stage.initStyle(StageStyle.UNDECORATED);
+        xOffset=0;
+        yOffset=0;
+        //move window easly
+        root.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                xOffset = event.getSceneX();
+                yOffset = event.getSceneY();
+            }
+        });
+        root.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.setX(event.getScreenX() - xOffset);
+                stage.setY(event.getScreenY() - yOffset);
+            }
+        });
+        stage.setScene(scene);
+        stage.initModality(Modality.WINDOW_MODAL);
+
+        close(new ActionEvent());
+        stage.show();
     }
 
     @FXML
