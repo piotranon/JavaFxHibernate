@@ -1,5 +1,8 @@
 # JavaFxHibernate
 
+Hibernate session should be opened once.
+
+
 ```sql
 create database test;
 use test;
